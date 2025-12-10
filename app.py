@@ -31,6 +31,10 @@ except LookupError:
 app = Flask(__name__)
 app.secret_key = 'sca_secret_key_2024'
 
+# Enable CORS for frontend deployment
+from flask_cors import CORS
+CORS(app)
+
 # Configuration
 DATABASE = 'sca.db'
 UPLOAD_FOLDER = 'static/uploads'
