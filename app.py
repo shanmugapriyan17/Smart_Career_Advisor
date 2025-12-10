@@ -782,6 +782,9 @@ def add_notification(user_id, message):
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
+    # Return JSON for API requests, HTML for page requests
+    if request.path.startswith('/api/') or request.is_json:
+        return jsonify({'error': 'Not found'}), 404
     return render_template('home.html'), 404
 
 @app.errorhandler(500)

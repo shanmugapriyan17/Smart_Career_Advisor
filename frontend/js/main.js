@@ -1,6 +1,9 @@
 // Smart Career Advisor - Main JavaScript
-// API Base URL for production deployment
-const API_BASE = 'https://sca-backend.onrender.com';
+// API Base URL - use relative paths for same-origin requests
+// In production, Render backend and Vercel frontend will handle CORS properly
+const API_BASE = window.location.origin !== 'https://smart-career-advisor-seven.vercel.app'
+    ? 'https://sca-backend.onrender.com'
+    : 'https://sca-backend.onrender.com';
 
 // ===== THEME MANAGEMENT =====
 function initTheme() {
@@ -353,7 +356,20 @@ function submitSignupForm(form) {
         body: JSON.stringify(data),
         credentials: 'include'
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            // Non-2xx status code - try to parse error response
+            return res.text().then(text => {
+                try {
+                    const errorData = JSON.parse(text);
+                    throw new Error(errorData.error || `Server error: ${res.status}`);
+                } catch (e) {
+                    throw new Error(`Server error: ${res.status}`);
+                }
+            });
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.success) {
             showSuccessPopup('Account created! Redirecting to dashboard...', () => {
@@ -365,7 +381,7 @@ function submitSignupForm(form) {
     })
     .catch(err => {
         console.error('Signup error:', err);
-        showErrorPopup('An error occurred. Please try again.');
+        showErrorPopup(err.message || 'An error occurred. Please try again.');
     });
 }
 
@@ -379,7 +395,20 @@ function submitLoginForm(form) {
         body: JSON.stringify(data),
         credentials: 'include'
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            // Non-2xx status code - try to parse error response
+            return res.text().then(text => {
+                try {
+                    const errorData = JSON.parse(text);
+                    throw new Error(errorData.error || `Server error: ${res.status}`);
+                } catch (e) {
+                    throw new Error(`Server error: ${res.status}`);
+                }
+            });
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.success) {
             showSuccessPopup('Login successful! Redirecting...', () => {
@@ -391,7 +420,7 @@ function submitLoginForm(form) {
     })
     .catch(err => {
         console.error('Login error:', err);
-        showErrorPopup('An error occurred. Please try again.');
+        showErrorPopup(err.message || 'An error occurred. Please try again.');
     });
 }
 
@@ -554,8 +583,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load user data in settings
     if (document.getElementById('settingsEmail')) {
-        fetch(`${API_BASE}/api/profile`)
-            .then(r => r.json())
+        fetch(`${API_BASE}/api/profile`, {
+            credentials: 'include'
+        })
+            .then(r => {
+                // Check response status
+                if (!r.ok) {
+                    // User not logged in or error - silently skip
+                    throw new Error(`Status ${r.status}`);
+                }
+                return r.json();
+            })
             .then(data => {
                 // Update username
                 const usernameEl = document.getElementById('settingsUsername');
