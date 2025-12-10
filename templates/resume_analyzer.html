@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Analyzer - Smart Career Advisor{% endblock %}
+
+{% block content %}
+<div class="resume-analyzer-container">
+    <h1>Resume Analyzer</h1>
+    <p class="subtitle">Upload your resume and get instant AI-powered career insights</p>
+
+    <!-- Tabbed Interface -->
+    <div class="analyzer-tabs">
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="step1">
+                <span class="tab-number">1</span>
+                <span class="tab-label">Upload Resume</span>
+            </button>
+            <button class="tab-btn" data-tab="step2" disabled>
+                <span class="tab-number">2</span>
+                <span class="tab-label">Extract Skills</span>
+            </button>
+            <button class="tab-btn" data-tab="step3" disabled>
+                <span class="tab-number">3</span>
+                <span class="tab-label">Career Prediction</span>
+            </button>
+        </div>
+
+        <!-- Step 1: Upload Resume -->
+        <div class="tab-content active" id="step1">
+            <div class="analyzer-card">
+                <h2>Step 1: Upload Your Resume</h2>
+                <p>Upload a PDF or TXT file containing your resume. The system will extract skills and analyze your career fit.</p>
+
+                <div class="upload-area">
+                    <label for="resumeFile" class="upload-box large">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <h3>Drop your resume here</h3>
+                        <p>or click to browse (PDF or TXT, max 5MB)</p>
+                    </label>
+                    <input type="file" id="resumeFile" style="display: none;" accept=".pdf,.txt">
+                </div>
+
+                <div id="uploadStatus" style="display: none;" class="upload-status">
+                    <div class="spinner"></div>
+                    <p>Processing your resume...</p>
+                </div>
+
+                <div id="uploadSuccess" style="display: none;" class="upload-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <p>Resume uploaded successfully! Click Next to continue.</p>
+                </div>
+
+                <div class="tab-actions">
+                    <button class="btn btn-primary" id="nextStep1" style="display: none;">Next Step</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Extract Skills -->
+        <div class="tab-content" id="step2">
+            <div class="analyzer-card">
+                <h2>Step 2: Extracted Skills</h2>
+                <p>These are the key skills detected from your resume. You can edit them if needed.</p>
+
+                <div class="skills-section">
+                    <h4>Identified Skills</h4>
+                    <div id="skillsExtraction" class="skills-tags">
+                        <p class="loading-msg">Loading skills...</p>
+                    </div>
+                </div>
+
+                <div class="resume-preview-section">
+                    <h4>Resume Text Preview</h4>
+                    <div class="preview-box" id="resumePreview"></div>
+                </div>
+
+                <div class="tab-actions">
+                    <button class="btn btn-secondary" id="backStep2">Back</button>
+                    <button class="btn btn-primary" id="nextStep2">Analyze & Predict</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Career Prediction -->
+        <div class="tab-content" id="step3">
+            <div class="analyzer-card">
+                <h2>Step 3: Career Prediction Analysis</h2>
+
+                <!-- Model Comparison -->
+                <div class="model-comparison">
+                    <h3>AI Model Predictions</h3>
+                    <p class="comparison-subtitle">Comparing multiple machine learning models for career fit</p>
+
+                    <div class="model-cards">
+                        <div class="model-card">
+                            <div class="model-header">
+                                <h4>SVM Model</h4>
+                                <span class="model-badge">Support Vector Machine</span>
+                            </div>
+                            <div class="model-result">
+                                <p class="model-role" id="svmRole">-</p>
+                                <p class="model-confidence" id="svmConfidence">-</p>
+                            </div>
+                        </div>
+
+                        <div class="model-card">
+                            <div class="model-header">
+                                <h4>Random Forest Model</h4>
+                                <span class="model-badge">Ensemble Learning</span>
+                            </div>
+                            <div class="model-result">
+                                <p class="model-role" id="rfRole">-</p>
+                                <p class="model-confidence" id="rfConfidence">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top 3 Recommendations -->
+                <div class="top-roles-section">
+                    <h3>Top 3 Recommended Roles</h3>
+                    <div class="roles-list">
+                        <div class="role-item rank-1">
+                            <div class="rank-badge">1</div>
+                            <div class="role-info">
+                                <p class="role-name" id="topRole1">-</p>
+                                <div class="role-bar">
+                                    <div class="role-fill" id="topScore1"></div>
+                                </div>
+                                <p class="role-confidence" id="topConf1">-</p>
+                            </div>
+                        </div>
+                        <div class="role-item rank-2">
+                            <div class="rank-badge">2</div>
+                            <div class="role-info">
+                                <p class="role-name" id="topRole2">-</p>
+                                <div class="role-bar">
+                                    <div class="role-fill" id="topScore2"></div>
+                                </div>
+                                <p class="role-confidence" id="topConf2">-</p>
+                            </div>
+                        </div>
+                        <div class="role-item rank-3">
+                            <div class="rank-badge">3</div>
+                            <div class="role-info">
+                                <p class="role-name" id="topRole3">-</p>
+                                <div class="role-bar">
+                                    <div class="role-fill" id="topScore3"></div>
+                                </div>
+                                <p class="role-confidence" id="topConf3">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Fit Analysis -->
+                <div class="job-fit-section">
+                    <h3>Job Role Fit Analysis</h3>
+                    <p class="fit-subtitle">Enter a specific job role to analyze your fit</p>
+                    <div class="job-fit-input">
+                        <input type="text" id="jobRoleInput" placeholder="e.g., Full Stack Developer, Data Scientist, DevOps Engineer...">
+                        <button class="btn btn-primary" id="analyzeFitBtn">Analyze Fit</button>
+                    </div>
+
+                    <div id="fitResult" style="display: none;" class="fit-result">
+                        <h4>Your Fit Analysis for <strong id="analyzedRole">-</strong></h4>
+                        <div class="fit-gauge">
+                            <div class="fit-bar">
+                                <div class="fit-progress" id="fitScore"></div>
+                            </div>
+                            <p class="fit-percentage"><strong id="fitPercentage">-</strong></p>
+                        </div>
+                        <div class="fit-details">
+                            <div class="fit-detail">
+                                <span class="detail-label">Skills Match</span>
+                                <span class="detail-value" id="skillsMatch">-</span>
+                            </div>
+                            <div class="fit-detail">
+                                <span class="detail-label">Experience Level</span>
+                                <span class="detail-value" id="expLevel">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-actions">
+                    <button class="btn btn-secondary" id="backStep3">Back</button>
+                    <button class="btn btn-accent" id="downloadReport">Download Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let uploadedText = '';
+    let extractedSkills = [];
+    let currentStep = 1;
+
+    // Tab Navigation
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (!this.disabled) {
+                const tabId = this.dataset.tab;
+                goToTab(tabId);
+            }
+        });
+    });
+
+    function goToTab(tabId) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Deactivate all tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+        // Update current step
+        currentStep = parseInt(tabId.replace('step', ''));
+    }
+
+    function enableTab(tabNum) {
+        document.querySelector(`[data-tab="step${tabNum}"]`).disabled = false;
+    }
+
+    // Step 1: Upload Resume
+    document.getElementById('resumeFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File too large (max 5MB)');
+                return;
+            }
+
+            document.getElementById('uploadStatus').style.display = 'flex';
+            document.getElementById('uploadSuccess').style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/api/upload-resume', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('uploadStatus').style.display = 'none';
+
+                if (data.success) {
+                    uploadedText = data.preview_text || '';
+                    extractedSkills = data.skills || [];
+
+                    document.getElementById('uploadSuccess').style.display = 'flex';
+                    document.getElementById('nextStep1').style.display = 'block';
+
+                    enableTab(2);
+                } else {
+                    alert('Error uploading resume: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                alert('Upload failed: ' + err.message);
+                document.getElementById('uploadStatus').style.display = 'none';
+            });
+        }
+    });
+
+    // Step 1: Next Button
+    document.getElementById('nextStep1').addEventListener('click', function() {
+        // Show skills
+        document.getElementById('skillsExtraction').innerHTML = extractedSkills.length > 0
+            ? extractedSkills.map(s => `<span class="skill-tag">${s}</span>`).join('')
+            : '<p class="empty-msg">No skills detected</p>';
+
+        // Show preview
+        document.getElementById('resumePreview').textContent = uploadedText || 'Resume content will appear here...';
+
+        goToTab('step2');
+    });
+
+    // Step 2: Back Button
+    document.getElementById('backStep2').addEventListener('click', function() {
+        goToTab('step1');
+    });
+
+    // Step 2: Next Button (Predict)
+    document.getElementById('nextStep2').addEventListener('click', function() {
+        const skillsText = extractedSkills.join(', ');
+
+        fetch('/api/predict-role', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: skillsText }),
+            credentials: 'include'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                // SVM predictions
+                document.getElementById('svmRole').textContent = data.svm_role || data.predicted_role || '-';
+                document.getElementById('svmConfidence').textContent = '' || 'N/A';
+
+                // RF predictions
+                document.getElementById('rfRole').textContent = data.rf_role || data.predicted_role || '-';
+                document.getElementById('rfConfidence').textContent = '' || 'N/A';
+
+                // Top 3 roles
+                if (data.top_roles && data.top_roles.length >= 3) {
+                    for (let i = 0; i < 3; i++) {
+                        const role = data.top_roles[i];
+                        document.getElementById(`topRole${i + 1}`).textContent = role.role || '-';
+                        document.getElementById(`topScore${i + 1}`).style.width = (role.confidence * 100) + '%';
+                        document.getElementById(`topConf${i + 1}`).textContent = '';
+                    }
+                }
+
+                enableTab(3);
+                goToTab('step3');
+            } else {
+                alert('Prediction failed: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => alert('Prediction error: ' + err.message));
+    });
+
+    // Step 3: Back Button
+    document.getElementById('backStep3').addEventListener('click', function() {
+        goToTab('step2');
+    });
+
+    // Step 3: Analyze Fit
+    document.getElementById('analyzeFitBtn').addEventListener('click', function() {
+        const jobRole = document.getElementById('jobRoleInput').value.trim();
+        if (!jobRole) {
+            alert('Please enter a job role');
+            return;
+        }
+
+        const skillsText = extractedSkills.join(', ');
+
+        fetch('/api/job-fit-analysis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                job_role: jobRole,
+                skills: skillsText,
+                resume_text: uploadedText
+            }),
+            credentials: 'include'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('fitResult').style.display = 'block';
+                document.getElementById('analyzedRole').textContent = jobRole;
+                document.getElementById('fitPercentage').textContent = (data.fit_score * 100).toFixed(1) + '%';
+                document.getElementById('fitScore').style.width = (data.fit_score * 100) + '%';
+                document.getElementById('skillsMatch').textContent = data.skills_match || 'Good';
+                document.getElementById('expLevel').textContent = data.experience_level || 'Intermediate';
+            } else {
+                alert('Analysis failed: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => alert('Analysis error: ' + err.message));
+    });
+
+    // Download Report
+    document.getElementById('downloadReport').addEventListener('click', function() {
+        const reportContent = `
+RESUME ANALYSIS REPORT
+=====================
+
+Job Role Predictions:
+- SVM Model: ${document.getElementById('svmRole').textContent}
+- Random Forest: ${document.getElementById('rfRole').textContent}
+
+Top 3 Recommended Roles:
+1. ${document.getElementById('topRole1').textContent}
+2. ${document.getElementById('topRole2').textContent}
+3. ${document.getElementById('topRole3').textContent}
+
+Extracted Skills:
+${extractedSkills.join(', ')}
+
+Date: ${new Date().toLocaleDateString()}
+        `;
+
+        const blob = new Blob([reportContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'resume_analysis_report.txt';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+});
+</script>
+{% endblock %}

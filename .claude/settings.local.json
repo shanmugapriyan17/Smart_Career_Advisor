@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"E:\\R PROJECT\\new\\SCA\")",
+      "Bash(python generate_dataset.py:*)",
+      "Bash(python:*)",
+      "Bash(dir:*)",
+      "Bash(tree:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)",
+      "Bash(find:*)",
+      "Bash(timeout 300 python:*)",
+      "Bash(del \"COMPLETION_SUMMARY.txt\" \"PROJECT_SUMMARY.txt\" \"FINAL_VERIFICATION_REPORT.txt\" \"QUICK_START_SESSION_2.md\" \"CORRECTIONS_CHANGELOG.md\" \"README_FINAL.md\" \"DETAILED_CHANGES.md\" \"SESSION_2_DELIVERABLES.md\" \"FINAL_UPDATES_CHANGELOG.md\" \"SESSION_2_SUMMARY.md\" \"SETUP.md\" \"TEST_VALIDATION_REPORT.md\" \"PROJECT_SUMMARY.md\")",
+      "Bash(copy \"E:\\R PROJECT\\new\\SCA\\templates\\IMG\\rathideviIMG.jpg\" \"E:\\R PROJECT\\new\\SCA\\static\\IMG\\rathideviIMG.jpg\")",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

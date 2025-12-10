@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-12-10T21:32:38.436303",
+  "best_model": "SVM",
+  "normalized_roles": [
+    "AI/ML Engineer",
+    "Cloud Engineer",
+    "Data Scientist",
+    "DevOps Engineer",
+    "Field Engineer",
+    "Full Stack Developer",
+    "Network Engineer",
+    "RF Engineer"
+  ],
+  "svm_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0
+  },
+  "rf_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0
+  },
+  "vectorizer_config": {
+    "max_features": 5000,
+    "stop_words": "english",
+    "ngram_range": [
+      1,
+      2
+    ]
+  },
+  "training_info": {
+    "total_records_after_normalization": 50000,
+    "test_split": 0.2,
+    "models_saved": [
+      "svm_model.joblib",
+      "rf_model.joblib",
+      "best_model.joblib"
+    ],
+    "ensemble_enabled": true,
+    "label_normalization": "Normalized 44 raw roles to 8 required roles",
+    "vectorization_note": "TF-IDF: max_features=5000, ngram_range=(1,2), min_df=2, max_df=0.8, sublinear_tf=True"
+  }
+}
