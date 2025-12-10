@@ -1,20 +1,223 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Smart Career Advisor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- PDF.js Library for PDF Preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set PDF.js worker (required for PDF processing)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <!-- Logo - Left Section -->
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 8 L28 20 L20 32 L12 20 Z" fill="currentColor" opacity="0.8"/>
+                </svg>
+                <span class="logo-text">Smart Career Advisor</span>
+            </div>
 
-{% block title %}Home - Smart Career Advisor{% endblock %}
+            <!-- Navigation - Center Section (Hidden on Mobile) -->
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard.html" class="nav-link" id="dashboardLink" onclick="handleDashboardClick(event)">Dashboard</a>
+                <a href="resume_analyzer.html" class="nav-link">Resume Analyzer</a>
+                <a href="about.html" class="nav-link">About Us</a>
+            </nav>
 
-{% block content %}
+            <!-- Right Icons Section -->
+            <div class="header-actions">
+                <button class="icon-btn search-btn" id="searchBtn" title="Search" aria-label="Search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn settings-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m3.08 3.08l4.24 4.24M1 12h6m6 0h6m-15.78 7.78l4.24-4.24m3.08-3.08l4.24-4.24"></path>
+                    </svg>
+                </button>
+                <!-- Hamburger Menu Toggle (Mobile Only) -->
+                <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu (Hidden by default) -->
+        <nav class="nav-mobile" id="navMobile">
+            <a href="index.html" class="nav-link mobile-nav-link">Home</a>
+            <a href="dashboard.html" class="nav-link mobile-nav-link" onclick="handleDashboardClick(event)">Dashboard</a>
+            <a href="resume_analyzer.html" class="nav-link mobile-nav-link">Resume Analyzer</a>
+            <a href="about.html" class="nav-link mobile-nav-link">About Us</a>
+        </nav>
+    </header>
+
+    <!-- Search Modal with Enhanced UI -->
+    <div class="modal" id="searchModal">
+        <div class="modal-overlay" id="searchOverlay"></div>
+        <div class="modal-content search-modal">
+            <button class="modal-close" id="searchClose" style="top: 1rem; right: 1rem; z-index: 10;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h3>Search</h3>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search jobs, skills, roles..." autofocus>
+            <div class="search-suggestions">
+                <div class="suggestion-chip" data-query="Data Scientist">Data Scientist</div>
+                <div class="suggestion-chip" data-query="Frontend Developer">Frontend Developer</div>
+                <div class="suggestion-chip" data-query="Machine Learning">Machine Learning</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Popup with Background Blur -->
+    <div class="settings-overlay" id="settingsOverlay" style="display: none;"></div>
+    <div class="popover" id="settingsPopover" style="display: none;">
+        <div class="popover-content">
+            <!-- Greeting based on login state -->
+            <h4 id="greetingText">Hello, Guest</h4>
+
+            <!-- Theme section -->
+            <div class="theme-section">
+                <label>Theme:</label>
+                <div class="theme-options">
+                    <label class="radio-label">
+                        <input type="radio" name="theme" value="light" id="themeLight">
+                        <span>Light Mode</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="theme" value="dark" id="themeDark">
+                        <span>Dark Mode</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="theme" value="system" id="themeSystem" checked>
+                        <span>System Default</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Profile section - Only shown when logged in (managed by JS) -->
+            <div id="profileSection" style="display: none;">
+                <hr>
+                <div class="profile-card-container">
+                    <button class="profile-card-button" id="profileCardBtn" type="button">
+                        <div class="profile-avatar-small" id="settingsAvatarContainer">
+                            <img id="settingsAvatar" src="" alt="Avatar" style="display: none;">
+                        </div>
+                        <div class="profile-info-small">
+                            <p class="profile-username" id="settingsUsername">User</p>
+                            <p class="profile-email" id="settingsEmail">email@example.com</p>
+                        </div>
+                    </button>
+                    <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+
+            <!-- Auth links - Only shown when not logged in (managed by JS) -->
+            <div id="authLinks" class="auth-links">
+                <button class="btn-link" id="loginBtn">Login</button>
+                <button class="btn-link" id="signupBtn">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content auth-modal">
+            <h2>Login</h2>
+            <form id="loginForm" method="POST">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                    <span class="error-msg"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p class="auth-footer">Don't have an account? <button type="button" class="btn-link" id="loginToSignupLink">Create Account</button></p>
+            <button class="modal-close auth-close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content auth-modal">
+            <h2>Create Account</h2>
+            <form id="signupForm" method="POST">
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" name="username" required>
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" name="email" required>
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="password" required>
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirm">Confirm Password</label>
+                    <input type="password" id="signupConfirm" name="confirm_password" required>
+                    <span class="error-msg"></span>
+                </div>
+                <div class="form-group checkbox">
+                    <label>
+                        <input type="checkbox" id="tcCheckbox" required>
+                        <span>I agree to <a href="about.html#terms" target="_blank">Terms & Conditions</a></span>
+                    </label>
+                    <span class="error-msg"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+            <button class="modal-close auth-close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
 <div class="hero">
     <div class="hero-content">
         <h1 class="hero-title">Discover Your Ideal Career Path</h1>
         <p class="hero-subtitle">Upload your resume and get AI-powered career recommendations powered by machine learning</p>
         <div class="hero-buttons">
-            {% if not session.get('user_id') %}
-                <button class="btn btn-primary btn-lg" id="getStartedBtn">Get Started</button>
-                <button class="btn btn-secondary btn-lg" id="learnMoreBtn">Learn More</button>
-            {% else %}
-                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
-                <a href="{{ url_for('resume_analyzer') }}" class="btn btn-secondary btn-lg">Analyze Resume</a>
-            {% endif %}
+            <button class="btn btn-primary btn-lg" id="getStartedBtn">Get Started</button>
+            <button class="btn btn-secondary btn-lg" id="learnMoreBtn">Learn More</button>
         </div>
     </div>
 </div>
@@ -127,7 +330,7 @@
             <p>Training Records</p>
         </div>
         <div class="stat">
-            <h4>44</h4>
+            <h4>8</h4>
             <p>Job Roles</p>
         </div>
         <div class="stat">
@@ -144,24 +347,90 @@
 <section class="cta-section">
     <h2>Ready to Find Your Perfect Role?</h2>
     <p>Start your career journey today with AI-powered insights</p>
-    {% if not session.get('user_id') %}
-        <button class="btn btn-primary btn-lg" id="ctaBtn">Sign Up Now</button>
-    {% else %}
-        <a href="{{ url_for('resume_analyzer') }}" class="btn btn-primary btn-lg">Upload Resume</a>
-    {% endif %}
+    <button class="btn btn-primary btn-lg" id="ctaBtn">Sign Up Now</button>
 </section>
+    </main>
 
-<script>
-    document.getElementById('getStartedBtn')?.addEventListener('click', function() {
-        document.getElementById('signupModal').style.display = 'flex';
-    });
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="footer-branding">
+                        <h4>Smart Career Advisor</h4>
+                        <p>AI-powered career guidance using machine learning and NLP</p>
+                    </div>
+                    <div class="footer-links-section">
+                        <h5>Quick Links</h5>
+                        <ul class="footer-links-list">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="dashboard.html">Dashboard</a></li>
+                            <li><a href="resume_analyzer.html">Resume Analyzer</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-section">
+                        <h5>Resources</h5>
+                        <ul class="footer-links-list">
+                            <li><a href="about.html#terms">Terms & Conditions</a></li>
+                            <li><a href="mailto:support@smartcareeradvisor.com">Contact Us</a></li>
+                            <li><a href="about.html">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Smart Career Advisor. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-    document.getElementById('ctaBtn')?.addEventListener('click', function() {
-        document.getElementById('signupModal').style.display = 'flex';
-    });
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+        <button class="ai-button" id="aiButton" title="AI Assistant">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="2" fill="currentColor"/>
+            </svg>
+        </button>
 
-    document.getElementById('learnMoreBtn')?.addEventListener('click', function() {
-        document.querySelector('.models-section').scrollIntoView({ behavior: 'smooth' });
-    });
-</script>
-{% endblock %}
+        <div class="ai-panel" id="aiPanel" style="display: none;">
+            <div class="ai-header">
+                <h4>AI Assistant</h4>
+                <button class="ai-close" id="aiClose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="ai-messages" id="aiMessages"></div>
+            <div class="ai-input-group">
+                <input type="text" id="aiInput" placeholder="Ask me something..." class="ai-input">
+                <button class="ai-send" id="aiSend">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 L4.13399899,1.16346273 C3.34915502,0.9 2.40734225,0.9 1.77946707,1.4429026 C0.994623095,2.0766819 0.837654326,3.0192662 1.15159189,3.97788954 L3.03521743,10.4188826 C3.03521743,10.5759799 3.19218622,10.7330773 3.50612381,10.7330773 L16.6915026,11.5185642 C16.6915026,11.5185642 17.1624089,11.5185642 17.1624089,12.0157788 C17.1624089,12.5129934 16.6915026,12.4744748 16.6915026,12.4744748 Z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js" defer></script>
+    <script>
+        // Home page specific scripts
+        document.getElementById('getStartedBtn')?.addEventListener('click', function() {
+            document.getElementById('signupModal').style.display = 'flex';
+        });
+
+        document.getElementById('ctaBtn')?.addEventListener('click', function() {
+            document.getElementById('signupModal').style.display = 'flex';
+        });
+
+        document.getElementById('learnMoreBtn')?.addEventListener('click', function() {
+            document.querySelector('.models-section').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

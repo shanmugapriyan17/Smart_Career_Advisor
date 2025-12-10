@@ -1,511 +1,370 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard - Smart Career Advisor{% endblock %}
-
-{% block content %}
-<div class="dashboard-container">
-    <!-- Dashboard with Left Profile and Right Resume Section -->
-    <div class="dashboard-layout">
-        <!-- LEFT SIDE: User Profile Info -->
-        <div class="profile-left-panel">
-            <div class="profile-welcome">
-                <h2 id="welcomeText">Welcome, <strong id="dashboardUsername">{{ username }}</strong></h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Career Advisor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- PDF.js Library for PDF Preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set PDF.js worker (required for PDF processing)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 8 L28 20 L20 32 L12 20 Z" fill="currentColor" opacity="0.8"/>
+                </svg>
+                <span class="logo-text">Smart Career Advisor</span>
             </div>
-
-            <!-- Avatar and Edit -->
-            <div class="profile-avatar-section">
-                <div class="profile-avatar-container">
-                    <img id="profileAvatar" class="profile-avatar-img" alt="Avatar" style="display: none;">
-                    <div id="avatarPlaceholder" class="avatar-placeholder" style="display: none;"></div>
-                    <label for="avatarInput" class="avatar-upload-label" title="Change avatar">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </label>
-                    <input type="file" id="avatarInput" style="display: none;" accept="image/jpeg,image/png,image/webp">
-                </div>
-                <button class="btn btn-secondary" id="editProfileBtn" style="margin-top: 1rem;">Edit Profile</button>
-            </div>
-
-            <!-- User Info -->
-            <div class="profile-details">
-                <div class="detail-group">
-                    <label>Email:</label>
-                    <p id="userEmail" class="detail-value">-</p>
-                </div>
-                <div class="detail-group">
-                    <label>Name & Initial:</label>
-                    <p id="userNameInitial" class="detail-value">-</p>
-                </div>
-                <div class="detail-group">
-                    <label>Phone:</label>
-                    <p id="userPhone" class="detail-value">-</p>
-                </div>
-                <div class="detail-group">
-                    <label>Date of Birth & Age:</label>
-                    <p id="userDOB" class="detail-value">-</p>
-                </div>
-                <div class="detail-group">
-                    <label>Skills:</label>
-                    <div id="userSkills" class="user-skills">
-                        <span class="empty-msg">No skills added yet</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notification Bell (moved to left) -->
-            <div class="notification-dropdown">
-                <button class="bell-icon" id="notifBell" title="Notifications">
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard.html" class="nav-link" id="dashboardLink">Dashboard</a>
+                <a href="resume_analyzer.html" class="nav-link">Resume Analyzer</a>
+                <a href="about.html" class="nav-link">About Us</a>
+            </nav>
+            <div class="header-actions">
+                <button class="icon-btn search-btn" id="searchBtn" title="Search" aria-label="Search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <span class="notif-badge" id="notifBadge" style="display: none;">0</span>
                 </button>
-                <div class="notif-dropdown-content" id="notifDropdown" style="display: none;">
-                    <h4>Notifications</h4>
-                    <div class="notif-list" id="notifList">
-                        <p class="empty-msg">No notifications yet</p>
-                    </div>
-                </div>
+                <button class="icon-btn settings-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m3.08 3.08l4.24 4.24M1 12h6m6 0h6m-15.78 7.78l4.24-4.24m3.08-3.08l4.24-4.24"></path>
+                    </svg>
+                </button>
+                <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
             </div>
         </div>
+        <nav class="nav-mobile" id="navMobile">
+            <a href="index.html" class="nav-link mobile-nav-link">Home</a>
+            <a href="dashboard.html" class="nav-link mobile-nav-link">Dashboard</a>
+            <a href="resume_analyzer.html" class="nav-link mobile-nav-link">Resume Analyzer</a>
+            <a href="about.html" class="nav-link mobile-nav-link">About Us</a>
+        </nav>
+    </header>
 
-        <!-- RIGHT SIDE: Resume Upload and Preview -->
-        <div class="resume-right-panel">
+    <!-- Settings & Modals -->
+    <div class="modal" id="searchModal">
+        <div class="modal-overlay" id="searchOverlay"></div>
+        <div class="modal-content search-modal">
+            <button class="modal-close" id="searchClose" style="top: 1rem; right: 1rem; z-index: 10;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h3>Search</h3>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search jobs, skills, roles..." autofocus>
+            <div class="search-suggestions">
+                <div class="suggestion-chip" data-query="Data Scientist">Data Scientist</div>
+                <div class="suggestion-chip" data-query="Frontend Developer">Frontend Developer</div>
+                <div class="suggestion-chip" data-query="Machine Learning">Machine Learning</div>
+            </div>
+        </div>
+    </div>
 
-            <!-- Resume Upload Section -->
-            <div class="resume-upload-card">
-                <h3>Resume Analyzer</h3>
-                <p>Upload your resume to extract skills and get career predictions</p>
-
-                <div class="resume-upload">
-                    <label for="resumeInput" class="upload-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        <h4>Upload Resume</h4>
-                        <p>PDF or TXT (Max 5MB)</p>
+    <div class="settings-overlay" id="settingsOverlay" style="display: none;"></div>
+    <div class="popover" id="settingsPopover" style="display: none;">
+        <div class="popover-content">
+            <h4 id="greetingText">Hello, Guest</h4>
+            <div class="theme-section">
+                <label>Theme:</label>
+                <div class="theme-options">
+                    <label class="radio-label">
+                        <input type="radio" name="theme" value="light" id="themeLight">
+                        <span>Light Mode</span>
                     </label>
-                    <input type="file" id="resumeInput" style="display: none;" accept=".pdf,.txt">
-                </div>
-
-                <!-- Resume Preview and Skills -->
-                <div id="resumeResult" style="display: none;" class="resume-result">
-                    <div class="resume-preview-full-section">
-                        <h4>Resume Preview</h4>
-                        <div class="resume-preview-container" id="resumePreview">
-                            <div class="resume-preview-placeholder">
-                                <p>Resume will be displayed here...</p>
-                            </div>
-                        </div>
-                        <!-- PDF Viewer for PDF files -->
-                        <div id="pdfViewerContainer" style="display: none;" class="pdf-viewer-container">
-                            <div class="pdf-toolbar">
-                                <button id="pdfPrevPage" class="pdf-btn" title="Previous page">← Prev</button>
-                                <span id="pdfPageNumber" class="pdf-page-info">Page <span id="pdfPageNum">1</span> of <span id="pdfPageTotal">0</span></span>
-                                <button id="pdfNextPage" class="pdf-btn" title="Next page">Next →</button>
-                            </div>
-                            <canvas id="pdfCanvas" class="pdf-canvas"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="extracted-skills-section">
-                        <h4>Extracted Skills</h4>
-                        <div class="skills-tags" id="extractedSkills"></div>
-                        <button class="btn btn-primary" id="predictBtn" style="margin-top: 1rem;">Get Career Prediction</button>
-                    </div>
-                </div>
-
-                <!-- Prediction Results -->
-                <div id="predictionResult" style="display: none;" class="prediction-result">
-                    <h4>Your Predicted Role</h4>
-                    <div class="role-box">
-                        <h2 id="predictedRole">-</h2>
-                        <p>Based on your resume and skills analysis</p>
-                    </div>
+                    <label class="radio-label">
+                        <input type="radio" name="theme" value="dark" id="themeDark">
+                        <span>Dark Mode</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="theme" value="system" id="themeSystem" checked>
+                        <span>System Default</span>
+                    </label>
                 </div>
             </div>
-
-            <!-- Stats Card -->
-            <div class="stats-card">
-                <h3>Your Progress</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-number" id="resumeCount">0</span>
-                        <span class="stat-label">Resumes Uploaded</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="skillsCount">0</span>
-                        <span class="stat-label">Skills Added</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="predictCount">0</span>
-                        <span class="stat-label">Predictions Made</span>
-                    </div>
+            <div id="profileSection" style="display: none;">
+                <hr>
+                <div class="profile-card-container">
+                    <button class="profile-card-button" id="profileCardBtn" type="button">
+                        <div class="profile-avatar-small" id="settingsAvatarContainer">
+                            <img id="settingsAvatar" src="" alt="Avatar" style="display: none;">
+                        </div>
+                        <div class="profile-info-small">
+                            <p class="profile-username" id="settingsUsername">User</p>
+                            <p class="profile-email" id="settingsEmail">email@example.com</p>
+                        </div>
+                    </button>
+                    <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
                 </div>
+            </div>
+            <div id="authLinks" class="auth-links">
+                <button class="btn-link" id="loginBtn">Login</button>
+                <button class="btn-link" id="signupBtn">Create Account</button>
             </div>
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="editProfileModal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <h2>Edit Profile</h2>
-            <form id="editProfileForm">
-                <div class="form-group">
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" placeholder="Your full name">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="initials">Initials</label>
-                        <input type="text" id="initials" placeholder="e.g., JD" maxlength="3">
+    <!-- Main Content -->
+    <main class="main">
+        <div class="dashboard-container">
+            <div class="dashboard-layout">
+                <!-- LEFT SIDE: User Profile Info -->
+                <div class="profile-left-panel">
+                    <div class="profile-welcome">
+                        <h2 id="welcomeText">Welcome, <strong id="dashboardUsername">User</strong></h2>
                     </div>
-                    <div class="form-group">
-                        <label for="phone">Phone</label>
-                        <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
+
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-container">
+                            <img id="profileAvatar" class="profile-avatar-img" alt="Avatar" style="display: none;">
+                            <div id="avatarPlaceholder" class="avatar-placeholder" style="display: none;"></div>
+                            <label for="avatarInput" class="avatar-upload-label" title="Change avatar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </label>
+                            <input type="file" id="avatarInput" style="display: none;" accept="image/jpeg,image/png,image/webp">
+                        </div>
+                        <button class="btn btn-secondary" id="editProfileBtn" style="margin-top: 1rem;">Edit Profile</button>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-group">
+                            <label>Email:</label>
+                            <p id="userEmail" class="detail-value">-</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Name & Initial:</label>
+                            <p id="userNameInitial" class="detail-value">-</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Phone:</label>
+                            <p id="userPhone" class="detail-value">-</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Date of Birth & Age:</label>
+                            <p id="userDOB" class="detail-value">-</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Skills:</label>
+                            <div id="userSkills" class="user-skills">
+                                <span class="empty-msg">No skills added yet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification-dropdown">
+                        <button class="bell-icon" id="notifBell" title="Notifications">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notif-badge" id="notifBadge" style="display: none;">0</span>
+                        </button>
+                        <div class="notif-dropdown-content" id="notifDropdown" style="display: none;">
+                            <h4>Notifications</h4>
+                            <div class="notif-list" id="notifList">
+                                <p class="empty-msg">No notifications yet</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="dob">Date of Birth</label>
-                    <input type="date" id="dob">
-                </div>
+                <!-- RIGHT SIDE: Resume Upload and Preview -->
+                <div class="resume-right-panel">
+                    <div class="resume-upload-card">
+                        <h3>Resume Analyzer</h3>
+                        <p>Upload your resume to extract skills and get career predictions</p>
 
-                <div class="form-group">
-                    <label for="skills">Skills (up to 5, comma separated)</label>
-                    <input type="text" id="skills" placeholder="Python, Machine Learning, Data Analysis">
-                </div>
+                        <div class="resume-upload">
+                            <label for="resumeInput" class="upload-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <h4>Upload Resume</h4>
+                                <p>PDF or TXT (Max 5MB)</p>
+                            </label>
+                            <input type="file" id="resumeInput" style="display: none;" accept=".pdf,.txt">
+                        </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                        <div id="resumeResult" style="display: none;" class="resume-result">
+                            <div class="resume-preview-full-section">
+                                <h4>Resume Preview</h4>
+                                <div class="resume-preview-container" id="resumePreview">
+                                    <div class="resume-preview-placeholder">
+                                        <p>Resume will be displayed here...</p>
+                                    </div>
+                                </div>
+                                <div id="pdfViewerContainer" style="display: none;" class="pdf-viewer-container">
+                                    <div class="pdf-toolbar">
+                                        <button id="pdfPrevPage" class="pdf-btn" title="Previous page">← Prev</button>
+                                        <span id="pdfPageNumber" class="pdf-page-info">Page <span id="pdfPageNum">1</span> of <span id="pdfPageTotal">0</span></span>
+                                        <button id="pdfNextPage" class="pdf-btn" title="Next page">Next →</button>
+                                    </div>
+                                    <canvas id="pdfCanvas" class="pdf-canvas"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="extracted-skills-section">
+                                <h4>Extracted Skills</h4>
+                                <div class="skills-tags" id="extractedSkills"></div>
+                                <button class="btn btn-primary" id="predictBtn" style="margin-top: 1rem;">Get Career Prediction</button>
+                            </div>
+                        </div>
+
+                        <div id="predictionResult" style="display: none;" class="prediction-result">
+                            <h4>Your Predicted Role</h4>
+                            <div class="role-box">
+                                <h2 id="predictedRole">-</h2>
+                                <p>Based on your resume and skills analysis</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-card">
+                        <h3>Your Progress</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number" id="resumeCount">0</span>
+                                <span class="stat-label">Resumes Uploaded</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="skillsCount">0</span>
+                                <span class="stat-label">Skills Added</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="predictCount">0</span>
+                                <span class="stat-label">Predictions Made</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <!-- Edit Profile Modal -->
+            <div class="modal" id="editProfileModal">
+                <div class="modal-overlay"></div>
+                <div class="modal-content">
+                    <h2>Edit Profile</h2>
+                    <form id="editProfileForm">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" placeholder="Your full name">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="initials">Initials</label>
+                                <input type="text" id="initials" placeholder="e.g., JD" maxlength="3">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob">
+                        </div>
+                        <div class="form-group">
+                            <label for="skills">Skills (up to 5, comma separated)</label>
+                            <input type="text" id="skills" placeholder="Python, Machine Learning, Data Analysis">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="footer-branding">
+                        <h4>Smart Career Advisor</h4>
+                        <p>AI-powered career guidance using machine learning and NLP</p>
+                    </div>
+                    <div class="footer-links-section">
+                        <h5>Quick Links</h5>
+                        <ul class="footer-links-list">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="dashboard.html">Dashboard</a></li>
+                            <li><a href="resume_analyzer.html">Resume Analyzer</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-section">
+                        <h5>Resources</h5>
+                        <ul class="footer-links-list">
+                            <li><a href="about.html#terms">Terms & Conditions</a></li>
+                            <li><a href="mailto:support@smartcareeradvisor.com">Contact Us</a></li>
+                            <li><a href="about.html">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Smart Career Advisor. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+        <button class="ai-button" id="aiButton" title="AI Assistant">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="2" fill="currentColor"/>
+            </svg>
+        </button>
+        <div class="ai-panel" id="aiPanel" style="display: none;">
+            <div class="ai-header">
+                <h4>AI Assistant</h4>
+                <button class="ai-close" id="aiClose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="ai-messages" id="aiMessages"></div>
+            <div class="ai-input-group">
+                <input type="text" id="aiInput" placeholder="Ask me something..." class="ai-input">
+                <button class="ai-send" id="aiSend">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 L4.13399899,1.16346273 C3.34915502,0.9 2.40734225,0.9 1.77946707,1.4429026 C0.994623095,2.0766819 0.837654326,3.0192662 1.15159189,3.97788954 L3.03521743,10.4188826 C3.03521743,10.5759799 3.19218622,10.7330773 3.50612381,10.7330773 L16.6915026,11.5185642 C16.6915026,11.5185642 17.1624089,11.5185642 17.1624089,12.0157788 C17.1624089,12.5129934 16.6915026,12.4744748 16.6915026,12.4744748 Z"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const username = '{{ username }}';
-
-    // Function to calculate age from DOB
-    function calculateAge(dobStr) {
-        if (!dobStr) return null;
-        const dob = new Date(dobStr);
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const monthDiff = today.getMonth() - dob.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-            age--;
-        }
-        return age;
-    }
-
-    // Function to format DOB display
-    function formatDOBDisplay(dobStr) {
-        if (!dobStr) return '-';
-        const dob = new Date(dobStr + 'T00:00:00');
-        const day = String(dob.getDate()).padStart(2, '0');
-        const month = String(dob.getMonth() + 1).padStart(2, '0');
-        const year = dob.getFullYear();
-        const age = calculateAge(dobStr);
-        return `${day}-${month}-${year}${age ? ' (Age: ' + age + ')' : ''}`;
-    }
-
-    // Function to create avatar placeholder
-    function createAvatarPlaceholder(username) {
-        const placeholder = document.getElementById('avatarPlaceholder');
-        const colors = ['#3B82F6', '#8B5CF6', '#EC4899', '#F97316', '#06B6D4', '#10B981', '#F59E0B', '#EF4444'];
-        let hash = 0;
-        for (let i = 0; i < username.length; i++) {
-            hash = username.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const color = colors[Math.abs(hash) % colors.length];
-        const letter = username.charAt(0).toUpperCase();
-
-        placeholder.style.backgroundColor = color;
-        placeholder.style.color = 'white';
-        placeholder.style.display = 'flex';
-        placeholder.style.alignItems = 'center';
-        placeholder.style.justifyContent = 'center';
-        placeholder.style.fontSize = '2rem';
-        placeholder.style.fontWeight = '600';
-        placeholder.style.borderRadius = '50%';
-        placeholder.style.width = '120px';
-        placeholder.style.height = '120px';
-        placeholder.textContent = letter;
-    }
-
-    // Function to update profile display
-    function updateProfileDisplay(data) {
-        // Email
-        document.getElementById('userEmail').textContent = data.email || '-';
-
-        // Name & Initial
-        const fullName = data.full_name || '-';
-        const initial = data.initials || (data.full_name ? data.full_name.charAt(0) : '');
-        document.getElementById('userNameInitial').textContent = initial ? `${fullName} ${initial}` : fullName;
-
-        // Phone
-        document.getElementById('userPhone').textContent = data.phone || '-';
-
-        // DOB & Age
-        document.getElementById('userDOB').textContent = formatDOBDisplay(data.dob);
-
-        // Skills
-        const skillsDiv = document.getElementById('userSkills');
-        if (data.skills && data.skills.length > 0) {
-            skillsDiv.innerHTML = data.skills.map(skill => `<span class="skill-chip">${skill}</span>`).join('');
-        } else {
-            skillsDiv.innerHTML = '<span class="empty-msg">No skills added yet</span>';
-        }
-
-        // Avatar
-        if (data.avatar_filename) {
-            document.getElementById('profileAvatar').src = `/static/uploads/avatars/${data.avatar_filename}`;
-            document.getElementById('profileAvatar').style.display = 'block';
-            document.getElementById('avatarPlaceholder').style.display = 'none';
-        } else {
-            document.getElementById('profileAvatar').style.display = 'none';
-            createAvatarPlaceholder(username);
-        }
-    }
-
-    // Load profile data
-    fetch('/api/profile', {
-        credentials: 'include'
-    })
-        .then(r => r.json())
-        .then(data => {
-            // Populate form with current data
-            document.getElementById('fullName').value = data.full_name || '';
-            document.getElementById('initials').value = data.initials || '';
-            document.getElementById('phone').value = data.phone || '';
-            document.getElementById('dob').value = data.dob || '';
-            document.getElementById('skills').value = data.skills.join(', ');
-
-            // Display profile on left panel
-            updateProfileDisplay(data);
-        });
-
-    // Load notifications
-    loadNotifications();
-
-    // Edit Profile
-    document.getElementById('editProfileBtn').addEventListener('click', () => {
-        document.getElementById('editProfileModal').style.display = 'flex';
-    });
-
-    document.getElementById('cancelEditBtn').addEventListener('click', () => {
-        document.getElementById('editProfileModal').style.display = 'none';
-    });
-
-    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
-
-        fetch('/api/profile', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                full_name: document.getElementById('fullName').value,
-                initials: document.getElementById('initials').value,
-                phone: document.getElementById('phone').value,
-                dob: document.getElementById('dob').value,
-                skills: skills
-            }),
-            credentials: 'include'
-        }).then(r => r.json()).then(data => {
-            if (data.success) {
-                document.getElementById('editProfileModal').style.display = 'none';
-                // Refresh profile display
-                fetch('/api/profile', { credentials: 'include' })
-                    .then(r => r.json())
-                    .then(profileData => updateProfileDisplay(profileData));
-                loadNotifications();
-            }
-        });
-    });
-
-    // Avatar Upload
-    document.getElementById('avatarInput').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            fetch('/api/avatar', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include'
-            }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    document.getElementById('profileAvatar').src = data.url;
-                    document.getElementById('profileAvatar').style.display = 'block';
-                    document.getElementById('avatarPlaceholder').style.display = 'none';
-                }
-            });
-        }
-    });
-
-    // PDF.js Setup for resume preview
-    let currentPdfDoc = null;
-    let currentPdfPage = 1;
-
-    async function displayPdfPreview(pdfUrl) {
-        try {
-            currentPdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
-            document.getElementById('pdfPageTotal').textContent = currentPdfDoc.numPages;
-            await renderPdfPage(1);
-            document.getElementById('pdfViewerContainer').style.display = 'flex';
-        } catch (error) {
-            console.error('Error loading PDF:', error);
-            document.getElementById('resumePreview').innerHTML = '<p class="preview-text">Error loading PDF preview</p>';
-        }
-    }
-
-    async function renderPdfPage(pageNum) {
-        if (!currentPdfDoc) return;
-        try {
-            const page = await currentPdfDoc.getPage(pageNum);
-            const canvas = document.getElementById('pdfCanvas');
-            const context = canvas.getContext('2d');
-            const scale = 1.5;
-            const viewport = page.getViewport({ scale });
-
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-
-            await page.render(renderContext).promise;
-            document.getElementById('pdfPageNum').textContent = pageNum;
-            currentPdfPage = pageNum;
-        } catch (error) {
-            console.error('Error rendering PDF page:', error);
-        }
-    }
-
-    // PDF navigation buttons
-    document.getElementById('pdfPrevPage')?.addEventListener('click', () => {
-        if (currentPdfPage > 1) renderPdfPage(currentPdfPage - 1);
-    });
-
-    document.getElementById('pdfNextPage')?.addEventListener('click', () => {
-        if (currentPdfDoc && currentPdfPage < currentPdfDoc.numPages) {
-            renderPdfPage(currentPdfPage + 1);
-        }
-    });
-
-    // Resume Upload
-    document.getElementById('resumeInput').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            fetch('/api/upload-resume', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include'
-            }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    document.getElementById('resumeResult').style.display = 'block';
-                    document.getElementById('extractedSkills').innerHTML = data.skills
-                        .map(s => `<span class="skill-tag">${s}</span>`).join('');
-                    document.getElementById('skillsCount').textContent = data.skills.length;
-
-                    // Display resume preview based on file type
-                    const fileType = data.file_type.toLowerCase();
-                    const pdfContainer = document.getElementById('pdfViewerContainer');
-                    const textContainer = document.getElementById('resumePreview');
-
-                    if (fileType === '.pdf') {
-                        // PDF: Use PDF.js viewer
-                        pdfContainer.style.display = 'flex';
-                        textContainer.innerHTML = '';
-                        displayPdfPreview(data.file_url);
-                    } else {
-                        // TXT or other: Show text preview
-                        pdfContainer.style.display = 'none';
-                        const previewText = data.preview_text || 'No text content available';
-                        textContainer.innerHTML = `
-                            <div class="text-preview-box">
-                                <p class="preview-text">${previewText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-                                <a href="${data.file_url}" target="_blank" class="preview-link">View Full Resume →</a>
-                            </div>
-                        `;
-                    }
-
-                    loadNotifications();
-                } else {
-                    document.getElementById('resumePreview').innerHTML = '<p class="preview-text error">Error: ' + (data.error || 'Upload failed') + '</p>';
-                }
-            }).catch(err => {
-                document.getElementById('resumePreview').innerHTML = '<p class="preview-text error">Upload failed: ' + err.message + '</p>';
-            });
-        }
-    });
-
-    // Predict Role
-    document.getElementById('predictBtn').addEventListener('click', function() {
-        const skillsText = document.getElementById('extractedSkills').textContent;
-        const skills = Array.from(document.getElementById('extractedSkills').querySelectorAll('.skill-tag')).map(s => s.textContent).join(', ');
-
-        fetch('/api/predict-role', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: skills }),
-            credentials: 'include'
-        }).then(r => r.json()).then(data => {
-            if (data.success) {
-                document.getElementById('predictionResult').style.display = 'block';
-                document.getElementById('predictedRole').textContent = data.predicted_role;
-                document.getElementById('predictCount').textContent = parseInt(document.getElementById('predictCount').textContent) + 1;
-                loadNotifications();
-            }
-        });
-    });
-
-    // Notification Bell
-    document.getElementById('notifBell').addEventListener('click', function() {
-        const dropdown = document.getElementById('notifDropdown');
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    });
-
-    function loadNotifications() {
-        fetch('/api/notifications', {
-            credentials: 'include'
-        })
-            .then(r => r.json())
-            .then(data => {
-                const list = document.getElementById('notifList');
-                if (data.notifications.length === 0) {
-                    list.innerHTML = '<p class="empty-msg">No notifications yet</p>';
-                    document.getElementById('notifBadge').style.display = 'none';
-                } else {
-                    list.innerHTML = data.notifications
-                        .map(n => `<div class="notif-item"><p>${n.message}</p><small>${new Date(n.created_at).toLocaleDateString()}</small></div>`)
-                        .join('');
-                    const unread = data.notifications.filter(n => !n.is_read).length;
-                    if (unread > 0) {
-                        document.getElementById('notifBadge').textContent = unread;
-                        document.getElementById('notifBadge').style.display = 'block';
-                    }
-                }
-            });
-    }
-});
-</script>
-{% endblock %}
+    <script src="js/main.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+</body>
+</html>
