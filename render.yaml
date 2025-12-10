@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: sca-backend
+    env: python
+    envSpecificDetails:
+      pythonVersion: 3.11.9
