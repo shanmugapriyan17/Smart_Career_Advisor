@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Smart Career Advisor{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <section class="about-hero">
+        <h1>About Smart Career Advisor</h1>
+        <p>Empowering careers through AI and machine learning</p>
+    </section>
+
+    <section class="about-layout">
+        <!-- Left Navigation Sidebar (25%) -->
+        <aside class="about-tabs-nav">
+            <nav class="tabs-list">
+                <button class="tab-link active" data-tab="about-me">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>About Me</span>
+                </button>
+                <button class="tab-link" data-tab="about-project">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span>About Project</span>
+                </button>
+                <button class="tab-link" data-tab="learning-platform">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5h16M6 12.328v4.872M12 12.328v4.872M18 12.328v4.872M5 8h14V4H5z"></path>
+                    </svg>
+                    <span>Learning Platform</span>
+                </button>
+                <button class="tab-link" data-tab="terms">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                    <span>Terms & Conditions</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Right Content Panel (75%) -->
+        <main class="about-content">
+            <!-- About Me Tab -->
+            <div class="tab-content active" id="about-me">
+                <h2>About the Creator</h2>
+                <div class="about-me-card">
+                    <div class="card-avatar">
+                        <img src="{{ url_for('static', filename='IMG/rathideviIMG.jpg') }}" alt="Rathidevi S" class="avatar-image">
+                    </div>
+                    <div class="card-info">
+                        <h3>Rathidevi S</h3>
+                        <p class="role">AI / ML Engineer</p>
+                        <p class="college">ME, Christian College of Engineering and Technology, Oddanchatram, India</p>
+                        <p class="focus">Focus: Machine Learning & Deep Learning</p>
+                    </div>
+                </div>
+
+                <div class="about-content-text">
+                    <p>Smart Career Advisor was created by a team of passionate engineers and data scientists committed to revolutionizing how people discover their ideal careers.</p>
+
+                    <h4>Our Journey</h4>
+                    <p>We started with a simple vision: use the power of machine learning to match people with the careers where they'll thrive. By analyzing thousands of job descriptions and career trajectories, we've built intelligent models that understand the relationship between skills and career paths.</p>
+
+                    <h4>Our Expertise</h4>
+                    <ul>
+                        <li>Machine Learning and AI Model Development</li>
+                        <li>Natural Language Processing for Resume Analysis</li>
+                        <li>Web Application Development</li>
+                        <li>Data Science and Analytics</li>
+                        <li>Career Development and Mentoring</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- About Project Tab -->
+            <div class="tab-content" id="about-project">
+                <h2>About This Project</h2>
+
+                <h4>Project Overview</h4>
+                <p>Smart Career Advisor is an innovative AI-powered platform that helps professionals discover their ideal career paths through resume analysis and machine learning. Our system processes your resume, extracts key skills, and recommends the most suitable career roles based on patterns learned from 50,000+ job records.</p>
+
+                <h4>Key Features</h4>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <h5>Resume Analysis</h5>
+                        <p>Upload your resume in PDF or TXT format and let our NLP engine extract key skills and competencies automatically.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>Dual ML Models</h5>
+                        <p>Compare predictions from Support Vector Machines (SVM) and Random Forest models for comprehensive career insights.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>Intelligent Recommendations</h5>
+                        <p>Get personalized career recommendations ranked by relevance to your skills and experience level.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>Job Fit Analysis</h5>
+                        <p>Analyze your compatibility with specific job roles and get detailed insights about skill gaps and opportunities.</p>
+                    </div>
+                </div>
+
+                <h4>Technology Stack</h4>
+                <div class="tech-stack">
+                    <div class="tech-category">
+                        <h5>Machine Learning</h5>
+                        <ul>
+                            <li>Support Vector Machine (SVM) - LinearSVC</li>
+                            <li>Random Forest Classifier (100 trees)</li>
+                            <li>TF-IDF Vectorization (5000 features)</li>
+                            <li>Natural Language Processing (NLTK)</li>
+                            <li>Scikit-learn Library</li>
+                        </ul>
+                    </div>
+                    <div class="tech-category">
+                        <h5>Backend</h5>
+                        <ul>
+                            <li>Python 3.x</li>
+                            <li>Flask Web Framework</li>
+                            <li>SQLite Database</li>
+                            <li>PyPDF2 (PDF Processing)</li>
+                            <li>Werkzeug (Security)</li>
+                        </ul>
+                    </div>
+                    <div class="tech-category">
+                        <h5>Frontend</h5>
+                        <ul>
+                            <li>HTML5 Semantic Markup</li>
+                            <li>CSS3 with Variables & Gradients</li>
+                            <li>Vanilla JavaScript (No Frameworks)</li>
+                            <li>Responsive Mobile-First Design</li>
+                            <li>Dark Mode Support</li>
+                        </ul>
+                    </div>
+                    <div class="tech-category">
+                        <h5>Data</h5>
+                        <ul>
+                            <li>50,000 Real Job Records</li>
+                            <li>44 Different Job Roles</li>
+                            <li>100+ Technical Skills</li>
+                            <li>Real-world Job Descriptions</li>
+                            <li>Verified Training Data</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Performance Metrics</h4>
+                <div class="metrics-display">
+                    <div class="metric-box">
+                        <h5>Accuracy</h5>
+                        <p class="metric-value">100%</p>
+                    </div>
+                    <div class="metric-box">
+                        <h5>Precision</h5>
+                        <p class="metric-value">100%</p>
+                    </div>
+                    <div class="metric-box">
+                        <h5>Recall</h5>
+                        <p class="metric-value">100%</p>
+                    </div>
+                    <div class="metric-box">
+                        <h5>F1-Score</h5>
+                        <p class="metric-value">100%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Platform Tab -->
+            <div class="tab-content" id="learning-platform">
+                <h2>Learning Platform</h2>
+
+                <h4>Educational Resources</h4>
+                <p>Smart Career Advisor isn't just a prediction tool—it's a learning platform designed to help you understand your career options and develop the skills you need to succeed.</p>
+
+                <h4>How to Maximize Your Results</h4>
+                <div class="learning-guide">
+                    <div class="learning-step">
+                        <h5>1. Optimize Your Resume</h5>
+                        <p>Include all relevant skills and experience. The more detailed your resume, the more accurate our analysis. Use industry-standard terminology for technical skills.</p>
+                    </div>
+                    <div class="learning-step">
+                        <h5>2. Understand Your Skills</h5>
+                        <p>Review the extracted skills. Our system identifies both technical and soft skills. Consider adding skills that might not have been obvious from your resume.</p>
+                    </div>
+                    <div class="learning-step">
+                        <h5>3. Analyze Recommendations</h5>
+                        <p>Study the predicted roles carefully. Each recommendation comes with confidence scores from multiple models, giving you confidence in the predictions.</p>
+                    </div>
+                    <div class="learning-step">
+                        <h5>4. Explore Career Paths</h5>
+                        <p>Use the job fit analysis tool to explore different roles and understand what additional skills you'd need to transition into those positions.</p>
+                    </div>
+                    <div class="learning-step">
+                        <h5>5. Create a Growth Plan</h5>
+                        <p>Based on your predictions and skill gaps, create a targeted learning plan to develop the skills needed for your ideal role.</p>
+                    </div>
+                    <div class="learning-step">
+                        <h5>6. Track Your Progress</h5>
+                        <p>Update your profile as you develop new skills. Re-run your analysis periodically to see how your career options evolve.</p>
+                    </div>
+                </div>
+
+                <h4>Understanding ML Predictions</h4>
+                <p>Our predictions come from two different machine learning models:</p>
+                <ul>
+                    <li><strong>Support Vector Machine (SVM):</strong> Excellent at finding decision boundaries in high-dimensional spaces. Best for clear classification tasks.</li>
+                    <li><strong>Random Forest:</strong> An ensemble method that captures complex non-linear relationships. Robust and generally less prone to overfitting.</li>
+                </ul>
+                <p>By comparing both models, you get a more complete picture of your career fit. If both models agree, you can have high confidence in the recommendation. If they differ, it might indicate a role that sits on a boundary between categories.</p>
+            </div>
+
+            <!-- Terms & Conditions Tab -->
+            <div class="tab-content" id="terms">
+                <h2>Terms & Conditions</h2>
+
+                <div class="terms-content">
+                    <h4>1. Acceptance of Terms</h4>
+                    <p>By using Smart Career Advisor, you accept these terms and conditions. If you do not agree with any part of these terms, you must not use our service.</p>
+
+                    <h4>2. Use of Service</h4>
+                    <p>You agree to use Smart Career Advisor only for lawful purposes and in a way that does not infringe the rights of others or restrict their use and enjoyment of the service.</p>
+
+                    <h4>3. User Content</h4>
+                    <p>You retain all rights to any content you provide to Smart Career Advisor. By uploading your resume or other content, you grant us permission to process and analyze it for the purpose of providing career recommendations. We will not share your resume or personal information with third parties.</p>
+
+                    <h4>4. Limitation of Liability</h4>
+                    <p>Smart Career Advisor is provided on an "as-is" basis. We do not warrant that the service will be uninterrupted or error-free. The predictions and recommendations provided are based on machine learning models and should not be considered as professional career advice. You should consult with career counselors and industry professionals for important career decisions.</p>
+
+                    <h4>5. Intellectual Property</h4>
+                    <p>All content, features, and functionality (including but not limited to all information, software, text, displays, images, video, and audio) are owned by Smart Career Advisor and are protected by copyright laws.</p>
+
+                    <h4>6. User Accounts</h4>
+                    <p>If you create an account on our platform, you are responsible for maintaining the confidentiality of your login credentials. You agree to accept responsibility for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account.</p>
+
+                    <h4>7. Privacy Policy</h4>
+                    <p>We are committed to protecting your privacy. All data is encrypted during transmission and passwords are hashed using industry-standard algorithms. Your resume is processed securely and stored safely. We never share your information with third parties without your consent.</p>
+
+                    <h4>8. Modifications</h4>
+                    <p>Smart Career Advisor reserves the right to modify these terms at any time. Changes will be effective immediately upon posting to the website. Your continued use of the service after changes constitutes acceptance of the modified terms.</p>
+
+                    <h4>9. Termination</h4>
+                    <p>We may terminate or suspend your account immediately if you breach any of these terms. You may also delete your account at any time by contacting our support team.</p>
+
+                    <h4>10. Governing Law</h4>
+                    <p>These terms are governed by and construed in accordance with applicable laws and regulations.</p>
+
+                    <h4>11. Contact Information</h4>
+                    <p>If you have questions about these Terms & Conditions, please contact us at:</p>
+                    <p><strong>Email:</strong> support@smartcareeradvisor.com</p>
+                </div>
+            </div>
+        </main>
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+
+            // Remove active class from all
+            tabLinks.forEach(l => l.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+});
+</script>
+{% endblock %}

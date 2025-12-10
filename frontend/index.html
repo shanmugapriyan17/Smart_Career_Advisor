@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Smart Career Advisor{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Discover Your Ideal Career Path</h1>
+        <p class="hero-subtitle">Upload your resume and get AI-powered career recommendations powered by machine learning</p>
+        <div class="hero-buttons">
+            {% if not session.get('user_id') %}
+                <button class="btn btn-primary btn-lg" id="getStartedBtn">Get Started</button>
+                <button class="btn btn-secondary btn-lg" id="learnMoreBtn">Learn More</button>
+            {% else %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                <a href="{{ url_for('resume_analyzer') }}" class="btn btn-secondary btn-lg">Analyze Resume</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<section class="features-section">
+    <h2>How It Works</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            <h3>Upload Resume</h3>
+            <p>Share your resume in PDF or TXT format for analysis</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 21H3V3h18v18zm-2-2V5H5v14h14z"></path>
+                </svg>
+            </div>
+            <h3>NLP Analysis</h3>
+            <p>We extract and analyze your skills using advanced NLP techniques</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 3H5a2 2 0 0 0-2 2v4m0 0H3m4 0h12a2 2 0 0 1 2 2v4m0 0v4a2 2 0 0 1-2 2H9m0 0H5a2 2 0 0 1-2-2v-4m0 0H3"></path>
+                </svg>
+            </div>
+            <h3>ML Prediction</h3>
+            <p>Our models trained on 50,000+ job records predict your ideal role</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                </svg>
+            </div>
+            <h3>Get Results</h3>
+            <p>Receive personalized career recommendations instantly</p>
+        </div>
+    </div>
+</section>
+
+<section class="models-section">
+    <h2>Our AI Models</h2>
+    <p class="section-subtitle">Comparing two powerful machine learning algorithms</p>
+
+    <div class="models-comparison">
+        <div class="model-card">
+            <h3>Support Vector Machine (SVM)</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="metric-label">Accuracy</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Precision</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Recall</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">F1-Score</span>
+                    <span class="metric-value">100%</span>
+                </div>
+            </div>
+            <p class="model-description">Linear SVM classifier trained on TF-IDF vectorized text features</p>
+        </div>
+
+        <div class="model-card selected">
+            <div class="badge">Best Model</div>
+            <h3>Random Forest</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="metric-label">Accuracy</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Precision</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Recall</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">F1-Score</span>
+                    <span class="metric-value">100%</span>
+                </div>
+            </div>
+            <p class="model-description">Ensemble of 100 decision trees trained on 50,000 job records</p>
+        </div>
+    </div>
+</section>
+
+<section class="dataset-section">
+    <h2>Powered by 50,000 Job Records</h2>
+    <div class="dataset-stats">
+        <div class="stat">
+            <h4>50,000</h4>
+            <p>Training Records</p>
+        </div>
+        <div class="stat">
+            <h4>44</h4>
+            <p>Job Roles</p>
+        </div>
+        <div class="stat">
+            <h4>5000</h4>
+            <p>Features (TF-IDF)</p>
+        </div>
+        <div class="stat">
+            <h4>100+</h4>
+            <p>Tech Skills</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <h2>Ready to Find Your Perfect Role?</h2>
+    <p>Start your career journey today with AI-powered insights</p>
+    {% if not session.get('user_id') %}
+        <button class="btn btn-primary btn-lg" id="ctaBtn">Sign Up Now</button>
+    {% else %}
+        <a href="{{ url_for('resume_analyzer') }}" class="btn btn-primary btn-lg">Upload Resume</a>
+    {% endif %}
+</section>
+
+<script>
+    document.getElementById('getStartedBtn')?.addEventListener('click', function() {
+        document.getElementById('signupModal').style.display = 'flex';
+    });
+
+    document.getElementById('ctaBtn')?.addEventListener('click', function() {
+        document.getElementById('signupModal').style.display = 'flex';
+    });
+
+    document.getElementById('learnMoreBtn')?.addEventListener('click', function() {
+        document.querySelector('.models-section').scrollIntoView({ behavior: 'smooth' });
+    });
+</script>
+{% endblock %}
