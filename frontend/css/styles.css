@@ -942,12 +942,12 @@ body.dark-mode .radio-label:hover {
 
 .notification-dropdown {
     position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .bell-icon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+    position: relative;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -958,6 +958,7 @@ body.dark-mode .radio-label:hover {
     align-items: center;
     justify-content: center;
     transition: color 0.2s ease;
+    margin-left: auto;
 }
 
 .bell-icon:hover {
@@ -993,10 +994,12 @@ body.dark-mode .radio-label:hover {
     border: 1px solid var(--current-border);
     border-radius: 8px;
     min-width: 300px;
+    max-width: 360px;
     max-height: 400px;
     overflow-y: auto;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     z-index: 100;
+    box-sizing: border-box;
 }
 
 .notif-dropdown-content h4 {
@@ -2767,19 +2770,31 @@ body.dark-mode .upload-box:hover {
     /* Notification dropdown responsive positioning */
     .notification-dropdown {
         position: relative;
+        overflow: visible;
+        width: 100%;
+        max-width: calc(100% - 2rem);
+        margin: 0 auto;
+    }
+
+    .bell-icon {
+        position: static;
+        margin-left: auto;
+        margin-right: 0;
     }
 
     .notif-dropdown-content {
         position: fixed;
         top: auto;
-        left: 0;
-        right: 0;
+        left: 1rem;
+        right: 1rem;
         bottom: 0;
-        width: 100%;
+        width: calc(100% - 2rem);
+        max-width: none;
         max-height: 60vh;
         border-radius: 8px 8px 0 0;
         margin: 0;
         z-index: 1000;
+        box-sizing: border-box;
     }
 
     .popover {
