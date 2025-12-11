@@ -336,9 +336,8 @@ def check_session():
 # ==================== API ENDPOINTS ====================
 
 @app.route('/api/upload-resume', methods=['POST'])
-@login_required
 def upload_resume():
-    """Upload and analyze resume"""
+    """Upload and analyze resume (anonymous users allowed)"""
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
 
@@ -351,8 +350,12 @@ def upload_resume():
         return jsonify({'error': 'Only TXT and PDF files allowed'}), 400
 
     try:
-        # Save file
-        filename = secure_filename(f"{session['user_id']}_{datetime.now().timestamp()}_{file.filename}")
+        # Get user_id if logged in, otherwise None for anonymous users
+        user_id = session.get('user_id')
+
+        # Create filename - use 'anonymous' for non-logged-in users
+        user_prefix = user_id if user_id else 'anonymous'
+        filename = secure_filename(f"{user_prefix}_{datetime.now().timestamp()}_{file.filename}")
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'resumes', filename)
         file.save(filepath)
 
@@ -365,18 +368,19 @@ def upload_resume():
         file_extension = os.path.splitext(file.filename)[1].lower()
         resume_url = f'/static/uploads/resumes/{filename}'  # URL to access the file
 
-        # Save to database (include filepath for preview display)
-        conn = get_db()
-        c = conn.cursor()
-        c.execute(
-            'INSERT INTO resumes (user_id, file_name, extracted_skills_json) VALUES (?, ?, ?)',
-            (session['user_id'], filename, json.dumps(skills))
-        )
-        conn.commit()
-        conn.close()
+        # Save to database only if user is logged in
+        if user_id:
+            conn = get_db()
+            c = conn.cursor()
+            c.execute(
+                'INSERT INTO resumes (user_id, file_name, extracted_skills_json) VALUES (?, ?, ?)',
+                (user_id, filename, json.dumps(skills))
+            )
+            conn.commit()
+            conn.close()
 
-        # Add notification
-        add_notification(session['user_id'], 'Resume uploaded')
+            # Add notification
+            add_notification(user_id, 'Resume uploaded')
 
         return jsonify({
             'success': True,
@@ -392,7 +396,6 @@ def upload_resume():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/predict-role', methods=['POST'])
-@login_required
 def predict_role():
     """Predict career role from resume text using ensemble of SVM and Random Forest models.
     GUARANTEED to return ONLY ONE of the 8 required roles:
@@ -564,30 +567,32 @@ def predict_role():
         if is_uncertain:
             uncertainty_message = "Prediction is uncertain. Please improve your resume with more specific skills and achievements."
 
-        # Save prediction to most recent resume
-        conn = get_db()
-        c = conn.cursor()
-        try:
-            c.execute(
-                'SELECT id FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC LIMIT 1',
-                (session['user_id'],)
-            )
-            resume = c.fetchone()
-
-            if resume:
+        # Save prediction to most recent resume (only if user is logged in)
+        user_id = session.get('user_id')
+        if user_id:
+            conn = get_db()
+            c = conn.cursor()
+            try:
                 c.execute(
-                    'UPDATE resumes SET prediction = ? WHERE id = ?',
-                    (final_role, resume['id'])
+                    'SELECT id FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC LIMIT 1',
+                    (user_id,)
                 )
-                conn.commit()
-        except Exception as db_error:
-            print(f"Database error saving prediction: {db_error}")
-            conn.rollback()
-        finally:
-            conn.close()
+                resume = c.fetchone()
 
-        # Add notification
-        add_notification(session['user_id'], f'Career role predicted: {final_role}')
+                if resume:
+                    c.execute(
+                        'UPDATE resumes SET prediction = ? WHERE id = ?',
+                        (final_role, resume['id'])
+                    )
+                    conn.commit()
+            except Exception as db_error:
+                print(f"Database error saving prediction: {db_error}")
+                conn.rollback()
+            finally:
+                conn.close()
+
+            # Add notification
+            add_notification(user_id, f'Career role predicted: {final_role}')
 
         return jsonify({
             'success': True,
@@ -725,7 +730,6 @@ def notifications():
     })
 
 @app.route('/api/job-fit-analysis', methods=['POST'])
-@login_required
 def job_fit_analysis():
     """Analyze fit for a specific job role"""
     data = request.get_json()
