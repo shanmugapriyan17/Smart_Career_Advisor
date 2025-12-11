@@ -305,6 +305,18 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
+@app.route('/api/session', methods=['GET'])
+def check_session():
+    """Check if user is authenticated"""
+    if 'user_id' in session:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('SELECT username FROM users WHERE id = ?', (session['user_id'],))
+        user = c.fetchone()
+        conn.close()
+        return jsonify({'authenticated': True, 'username': user['username'] if user else ''}), 200
+    return jsonify({'authenticated': False}), 200
+
 # ==================== API ENDPOINTS ====================
 
 @app.route('/api/upload-resume', methods=['POST'])
