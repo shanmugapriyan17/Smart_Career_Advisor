@@ -13,8 +13,11 @@ function loadUserProfile() {
     fetch(`${API_BASE}/api/profile`, {
         credentials: 'include'
     })
-        .then(r => {
-            if (!r.ok) throw new Error(`Status ${r.status}`);
+        .then(async r => {
+            if (!r.ok) {
+                const text = await r.text();
+                throw new Error(text || `Status ${r.status}`);
+            }
             return r.json();
         })
         .then(data => {
@@ -169,9 +172,10 @@ function setupAvatarUpload() {
             body: formData,
             credentials: 'include'
         })
-            .then(r => {
+            .then(async r => {
                 if (!r.ok) {
-                    throw new Error(`Upload failed with status ${r.status}`);
+                    const text = await r.text();
+                    throw new Error(text || `Upload failed with status ${r.status}`);
                 }
                 return r.json();
             })
@@ -228,9 +232,10 @@ function setupResumeUpload() {
             body: formData,
             credentials: 'include'
         })
-            .then(r => {
+            .then(async r => {
                 if (!r.ok) {
-                    throw new Error(`Upload failed with status ${r.status}`);
+                    const text = await r.text();
+                    throw new Error(text || `Upload failed with status ${r.status}`);
                 }
                 return r.json();
             })
@@ -341,8 +346,11 @@ function setupEditProfileModal() {
             body: JSON.stringify(profileData),
             credentials: 'include'
         })
-            .then(r => {
-                if (!r.ok) throw new Error(`Failed to save profile`);
+            .then(async r => {
+                if (!r.ok) {
+                    const text = await r.text();
+                    throw new Error(text || `Failed to save profile`);
+                }
                 return r.json();
             })
             .then(data => {

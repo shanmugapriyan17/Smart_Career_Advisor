@@ -142,9 +142,10 @@ function handleFileUpload(file) {
         body: formData,
         credentials: 'include'
     })
-        .then(r => {
+        .then(async r => {
             if (!r.ok) {
-                throw new Error(`Upload failed with status ${r.status}`);
+                const text = await r.text();
+                throw new Error(text || `Upload failed with status ${r.status}`);
             }
             return r.json();
         })
@@ -257,9 +258,10 @@ function performPrediction() {
         body: JSON.stringify({ text: skillsText }),
         credentials: 'include'
     })
-        .then(r => {
+        .then(async r => {
             if (!r.ok) {
-                throw new Error(`Prediction failed with status ${r.status}`);
+                const text = await r.text();
+                throw new Error(text || `Prediction failed with status ${r.status}`);
             }
             return r.json();
         })
@@ -339,8 +341,11 @@ function analyzeJobFit(jobRole) {
         }),
         credentials: 'include'
     })
-        .then(r => {
-            if (!r.ok) throw new Error('Job fit analysis failed');
+        .then(async r => {
+            if (!r.ok) {
+                const text = await r.text();
+                throw new Error(text || 'Job fit analysis failed');
+            }
             return r.json();
         })
         .then(data => {
