@@ -90,9 +90,9 @@ function updateThemeRadios(theme) {
 }
 
 // ===== HEADER & NAVIGATION =====
-function handleDashboardClick(event) {
-    const isLoggedIn = document.querySelector('#settingsUsername') !== null &&
-                       document.querySelector('#settingsUsername').parentElement.parentElement.style.display !== 'none';
+async function handleDashboardClick(event) {
+    // Check session with backend API
+    const isLoggedIn = await checkSession();
 
     if (!isLoggedIn && !window.location.pathname.includes('/dashboard')) {
         event.preventDefault();

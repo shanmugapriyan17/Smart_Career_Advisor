@@ -3,11 +3,34 @@
 const API_BASE = 'https://sca-backend-n7ic.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadUserProfile();
-    setupAvatarUpload();
-    setupResumeUpload();
-    setupEditProfileModal();
+    // Check if user is authenticated before loading dashboard
+    checkDashboardAuth();
 });
+
+async function checkDashboardAuth() {
+    try {
+        const res = await fetch(`${API_BASE}/api/session`, {
+            credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (!data.authenticated) {
+            // Not logged in - redirect to home which will show login modal
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // User is authenticated, load dashboard
+        loadUserProfile();
+        setupAvatarUpload();
+        setupResumeUpload();
+        setupEditProfileModal();
+    } catch (err) {
+        console.error('Auth check failed:', err);
+        // On error, redirect to home to be safe
+        window.location.href = 'index.html';
+    }
+}
 
 // ===== PROFILE LOADING =====
 function loadUserProfile() {
