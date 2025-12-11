@@ -31,9 +31,20 @@ except LookupError:
 app = Flask(__name__)
 app.secret_key = 'sca_secret_key_2024'
 
-# Enable CORS for frontend deployment
+# Session cookie configuration for cross-origin (Vercel ↔ Render)
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
+
+# Enable CORS for frontend deployment with credentials
 from flask_cors import CORS
-CORS(app)
+CORS(app,
+     resources={r"/api/*": {"origins": "https://smart-career-advisor-seven.vercel.app"}},
+     supports_credentials=True,
+     allow_headers=['Content-Type', 'X-Requested-With'],
+     expose_headers=['Content-Type', 'Set-Cookie'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
 # Global error handlers - return JSON instead of HTML
 @app.errorhandler(404)
