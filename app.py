@@ -127,6 +127,9 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
+            # Check if this is an AJAX/API request
+            if request.is_json or request.path.startswith('/api/') or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'error': 'Not authenticated. Please login.'}), 401
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
