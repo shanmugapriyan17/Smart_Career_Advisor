@@ -35,6 +35,19 @@ app.secret_key = 'sca_secret_key_2024'
 from flask_cors import CORS
 CORS(app)
 
+# Global error handlers - return JSON instead of HTML
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Endpoint not found.'}), 404
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify({'error': 'Method not allowed. Use POST for this endpoint.'}), 405
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error.'}), 500
+
 # Configuration
 DATABASE = 'sca.db'
 UPLOAD_FOLDER = 'static/uploads'
