@@ -1,9 +1,7 @@
 // Smart Career Advisor - Main JavaScript
 // API Base URL - use relative paths for same-origin requests
 // In production, Render backend and Vercel frontend will handle CORS properly
-const API_BASE = window.location.origin !== 'https://smart-career-advisor-seven.vercel.app'
-    ? 'https://sca-backend.onrender.com'
-    : 'https://sca-backend.onrender.com';
+const API_BASE = 'https://sca-backend-n7ic.onrender.com';
 
 // ===== THEME MANAGEMENT =====
 function initTheme() {
