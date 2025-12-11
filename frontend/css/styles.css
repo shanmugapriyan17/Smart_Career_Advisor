@@ -3624,6 +3624,8 @@ body.dark-mode .pdf-viewer-container {
         position: static;
         margin-left: auto;
         margin-right: 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
     }
 
     .notif-dropdown-content {
@@ -3695,7 +3697,21 @@ body.dark-mode .pdf-viewer-container {
         margin-top: 0.25rem;
     }
 
-    /* Analyze Fit section */
+    /* Analyze Fit section - Fix Issue #4 */
+    .job-fit-input {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .job-fit-input input {
+        width: 100%;
+    }
+
+    .job-fit-input .btn {
+        width: 100%;
+        white-space: normal;
+    }
+
     .fit-input-group {
         display: flex;
         flex-direction: column;
@@ -3721,6 +3737,41 @@ body.dark-mode .pdf-viewer-container {
         width: calc(100% - 2rem);
         margin: 0 auto;
         box-sizing: border-box;
+    }
+
+    /* Resume Analyzer card - Fix Issue #1 */
+    .analyzer-card {
+        padding: 1rem;
+    }
+
+    .analyzer-card h2 {
+        font-size: 1.15rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .analyzer-card > p {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Upload area padding fix - Issue #3 */
+    .upload-box {
+        padding: 1.5rem;
+    }
+
+    .upload-box h4 {
+        font-size: 1rem;
+        word-break: break-word;
+    }
+
+    .upload-box p {
+        font-size: 0.85rem;
+        word-break: break-word;
+    }
+
+    /* Step content padding */
+    .tab-content {
+        padding: 1rem;
     }
 }
 
