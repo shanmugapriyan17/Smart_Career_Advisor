@@ -91,28 +91,56 @@ function updateThemeRadios(theme) {
 
 // ===== HEADER & NAVIGATION =====
 async function handleDashboardClick(event) {
+    event.preventDefault();
+
     // Check session with backend API
-    const isLoggedIn = await checkSession();
+    try {
+        const res = await fetch(`${API_BASE}/api/session`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
 
-    if (!isLoggedIn && !window.location.pathname.includes('/dashboard')) {
-        event.preventDefault();
-        // Show login modal with custom message
-        const modal = document.getElementById('loginModal');
-        const modalContent = modal.querySelector('.modal-content');
-        const existingMsg = modalContent.querySelector('.dashboard-message');
-
-        if (existingMsg) {
-            existingMsg.remove();
+        if (!res.ok) {
+            // Not authenticated - open login modal and store redirect
+            window.__postLoginRedirect = 'dashboard.html';
+            openLoginModal();
+            return;
         }
 
-        const message = document.createElement('p');
-        message.className = 'dashboard-message';
-        message.textContent = 'Please login to access Dashboard';
-        message.style.cssText = 'color: var(--current-text-muted); text-align: center; margin-bottom: 1rem;';
-        modalContent.querySelector('h2').insertAdjacentElement('afterend', message);
-
-        modal.style.display = 'flex';
+        const data = await res.json();
+        if (data && data.authenticated) {
+            // User authenticated - navigate to dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            // Not authenticated - open login modal and store redirect
+            window.__postLoginRedirect = 'dashboard.html';
+            openLoginModal();
+        }
+    } catch (err) {
+        // Network or other error - open login modal (do not navigate)
+        console.error('Session check failed:', err);
+        window.__postLoginRedirect = 'dashboard.html';
+        openLoginModal();
     }
+}
+
+function openLoginModal() {
+    const modal = document.getElementById('loginModal');
+    const modalContent = modal.querySelector('.modal-content');
+    const existingMsg = modalContent.querySelector('.dashboard-message');
+
+    if (existingMsg) {
+        existingMsg.remove();
+    }
+
+    const message = document.createElement('p');
+    message.className = 'dashboard-message';
+    message.textContent = 'Please login to access Dashboard';
+    message.style.cssText = 'color: var(--current-text-muted); text-align: center; margin-bottom: 1rem;';
+    modalContent.querySelector('h2').insertAdjacentElement('afterend', message);
+
+    modal.style.display = 'flex';
 }
 
 // ===== HAMBURGER MENU =====
@@ -462,8 +490,18 @@ function submitLoginForm(form) {
     })
     .then(data => {
         if (data.success) {
+            // Close login modal
+            const loginModal = document.getElementById('loginModal');
+            loginModal.style.display = 'none';
+
+            // Determine redirect URL
+            const redirectTo = window.__postLoginRedirect || 'dashboard.html';
+
+            // Clear the stored redirect
+            window.__postLoginRedirect = null;
+
             showSuccessPopup('Login successful! Redirecting...', () => {
-                window.location.href = data.redirect || 'dashboard.html';
+                window.location.href = redirectTo;
             });
         } else {
             showErrorPopup(data.error || 'Login failed. Invalid credentials.');
