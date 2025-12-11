@@ -7,7 +7,7 @@ const API_BASE = window.location.origin !== 'https://smart-career-advisor-seven.
 
 // ===== THEME MANAGEMENT =====
 function initTheme() {
-    const savedTheme = localStorage.getItem('sca-theme') || 'system';
+    const savedTheme = localStorage.getItem('sca-theme') || 'light';
     setTheme(savedTheme);
     updateThemeRadios(savedTheme);
 
