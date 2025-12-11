@@ -234,7 +234,7 @@ def login():
             session['user_id'] = user['id']
             session.permanent = True
             if request.is_json:
-                return jsonify({'success': True, 'message': 'Login successful'}), 200
+                return jsonify({'success': True, 'message': 'Login successful', 'redirect': '/dashboard.html'}), 200
             return redirect(url_for('dashboard'))
         else:
             if request.is_json:
@@ -298,7 +298,7 @@ def signup():
         conn.close()
 
         if request.is_json:
-            return jsonify({'success': True, 'message': 'Account created successfully'}), 201
+            return jsonify({'success': True, 'message': 'Account created successfully', 'redirect': '/dashboard.html'}), 201
         return redirect(url_for('dashboard'))
 
     except sqlite3.IntegrityError:

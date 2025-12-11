@@ -421,7 +421,7 @@ function submitSignupForm(form) {
     .then(data => {
         if (data.success) {
             showSuccessPopup('Account created! Redirecting to dashboard...', () => {
-                window.location.href = '/dashboard';
+                window.location.href = data.redirect || 'dashboard.html';
             });
         } else {
             showErrorPopup(data.error || 'Signup failed. Please try again.');
@@ -463,7 +463,7 @@ function submitLoginForm(form) {
     .then(data => {
         if (data.success) {
             showSuccessPopup('Login successful! Redirecting...', () => {
-                window.location.href = '/dashboard';
+                window.location.href = data.redirect || 'dashboard.html';
             });
         } else {
             showErrorPopup(data.error || 'Login failed. Invalid credentials.');
