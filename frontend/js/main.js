@@ -3,6 +3,26 @@
 // In production, Render backend and Vercel frontend will handle CORS properly
 const API_BASE = 'https://sca-backend-n7ic.onrender.com';
 
+// ===== SESSION CHECK =====
+async function checkSession() {
+    try {
+        const res = await fetch(`${API_BASE}/api/session`, {
+            credentials: 'include'
+        });
+        if (!res.ok) {
+            throw new Error('Session check failed');
+        }
+        const data = await res.json();
+        return data.authenticated || false;
+    } catch (err) {
+        console.error('Session check error:', err);
+        return false;
+    }
+}
+
+// Store authentication state
+let isAuthenticated = false;
+
 // ===== THEME MANAGEMENT =====
 function initTheme() {
     const savedTheme = localStorage.getItem('sca-theme') || 'light';
@@ -633,7 +653,10 @@ async function fetchAPI(url, options = {}) {
 }
 
 // ===== INITIALIZATION =====
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Check session first
+    isAuthenticated = await checkSession();
+
     initTheme();
     setupModals();
     setupFormValidation();
@@ -644,15 +667,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUserGreeting();
 
     // Load user data in settings
-    if (document.getElementById('settingsEmail')) {
+    if (document.getElementById('settingsEmail') && isAuthenticated) {
         fetch(`${API_BASE}/api/profile`, {
             credentials: 'include'
         })
-            .then(r => {
+            .then(async r => {
                 // Check response status
                 if (!r.ok) {
                     // User not logged in or error - silently skip
-                    throw new Error(`Status ${r.status}`);
+                    const text = await r.text();
+                    throw new Error(text || `Status ${r.status}`);
                 }
                 return r.json();
             })

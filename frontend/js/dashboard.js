@@ -1,5 +1,6 @@
 // Smart Career Advisor - Dashboard JavaScript
 // Handles profile management, avatar upload, and resume handling on the dashboard
+const API_BASE = 'https://sca-backend-n7ic.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
     loadUserProfile();

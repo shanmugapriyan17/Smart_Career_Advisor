@@ -1,5 +1,6 @@
 // Smart Career Advisor - Resume Analyzer JavaScript
 // Handles the 3-step resume analysis wizard: Upload → Extract → Predict
+const API_BASE = 'https://sca-backend-n7ic.onrender.com';
 
 let currentStep = 1;
 let uploadedFile = null;
