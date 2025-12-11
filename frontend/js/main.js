@@ -23,6 +23,33 @@ async function checkSession() {
 // Store authentication state
 let isAuthenticated = false;
 
+// ===== API HELPER FUNCTION =====
+async function apiFetch(url, options = {}) {
+    // Add default AJAX headers
+    const headers = {
+        'X-Requested-With': 'XMLHttpRequest',
+        ...options.headers
+    };
+
+    const res = await fetch(url, {
+        credentials: 'include',
+        ...options,
+        headers
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        try {
+            const errorData = JSON.parse(text);
+            throw new Error(errorData.error || text || `Status ${res.status}`);
+        } catch (e) {
+            throw new Error(text || `Status ${res.status}`);
+        }
+    }
+
+    return res.json();
+}
+
 // ===== THEME MANAGEMENT =====
 function initTheme() {
     const savedTheme = localStorage.getItem('sca-theme') || 'light';
@@ -370,7 +397,10 @@ function submitSignupForm(form) {
 
     fetch(`${API_BASE}/signup`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: JSON.stringify(data),
         credentials: 'include'
     })
@@ -409,7 +439,10 @@ function submitLoginForm(form) {
 
     fetch(`${API_BASE}/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         body: JSON.stringify(data),
         credentials: 'include'
     })
