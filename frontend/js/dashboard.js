@@ -77,31 +77,50 @@ function updateProfileDisplay(data) {
         settingsEmail.textContent = data.email;
     }
 
-    // Update profile details displayed on dashboard
-    const profileName = document.getElementById('profileName');
-    if (profileName) {
-        profileName.textContent = data.full_name || 'Not set';
+    // Update dashboard username
+    const dashboardUsername = document.getElementById('dashboardUsername');
+    if (dashboardUsername) {
+        dashboardUsername.textContent = data.username;
     }
 
-    const profileEmail = document.getElementById('profileEmail');
-    if (profileEmail) {
-        profileEmail.textContent = data.email || 'Not available';
+    // Update email on dashboard profile
+    const userEmail = document.getElementById('userEmail');
+    if (userEmail) {
+        userEmail.textContent = data.email || 'Not available';
+    }
+
+    // Update name + initial
+    let nameInitialText = '-';
+    if (data.full_name || data.initials) {
+        nameInitialText = `${data.full_name || ''} ${data.initials || ''}`.trim() || '-';
+    }
+    const userNameInitial = document.getElementById('userNameInitial');
+    if (userNameInitial) {
+        userNameInitial.textContent = nameInitialText;
+    }
+
+    // Update phone
+    const userPhone = document.getElementById('userPhone');
+    if (userPhone) {
+        userPhone.textContent = data.phone || '-';
     }
 
     // Calculate and display age if DOB is set
+    let dobText = '-';
     if (data.dob) {
         const age = calculateAge(data.dob);
-        const profileAge = document.getElementById('profileAge');
-        if (profileAge) {
-            profileAge.textContent = `${age} years old`;
-        }
+        dobText = `${data.dob} (${age} years)`;
+    }
+    const userDOB = document.getElementById('userDOB');
+    if (userDOB) {
+        userDOB.textContent = dobText;
     }
 
-    // Display skills
+    // Display skills as chips
     if (data.skills && Array.isArray(data.skills) && data.skills.length > 0) {
-        const skillsList = document.getElementById('skillsList');
-        if (skillsList) {
-            skillsList.innerHTML = data.skills
+        const userSkills = document.getElementById('userSkills');
+        if (userSkills) {
+            userSkills.innerHTML = data.skills
                 .slice(0, 5)
                 .map(skill => `<span class="skill-chip">${skill}</span>`)
                 .join('');

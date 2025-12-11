@@ -510,6 +510,68 @@ function clearError(element) {
     }
 }
 
+// ===== LOGOUT =====
+function setupLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!logoutBtn) return;
+
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetch(`${API_BASE}/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) throw new Error(`Logout failed: ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showSuccessPopup('Logged out successfully. Redirecting...', () => {
+                        window.location.href = '/';
+                    });
+                } else {
+                    showErrorPopup(data.error || 'Logout failed');
+                }
+            })
+            .catch(err => {
+                console.error('Logout error:', err);
+                // Force redirect even on error
+                window.location.href = '/';
+            });
+    });
+}
+
+// ===== NOTIFICATIONS =====
+function setupNotifications() {
+    const notifBell = document.getElementById('notifBell');
+    const notifDropdown = document.getElementById('notifDropdown');
+
+    if (!notifBell || !notifDropdown) return;
+
+    // Toggle dropdown on bell click
+    notifBell.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isVisible = notifDropdown.style.display !== 'none';
+        notifDropdown.style.display = isVisible ? 'none' : 'block';
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!notifBell.contains(e.target) && !notifDropdown.contains(e.target)) {
+            notifDropdown.style.display = 'none';
+        }
+    });
+
+    // Close dropdown on ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            notifDropdown.style.display = 'none';
+        }
+    });
+}
+
 // ===== AI ASSISTANT =====
 function setupAIAssistant() {
     const aiButton = document.getElementById('aiButton');
@@ -579,6 +641,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormValidation();
     setupAIAssistant();
     setupHamburgerMenu();
+    setupLogout();
+    setupNotifications();
     updateUserGreeting();
 
     // Load user data in settings
