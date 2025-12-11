@@ -185,30 +185,11 @@ def about():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    """User dashboard"""
-    conn = get_db()
-    c = conn.cursor()
-
-    # Get user info
-    c.execute('SELECT username, email FROM users WHERE id = ?', (session['user_id'],))
-    user = c.fetchone()
-
-    # Get profile
-    c.execute('SELECT * FROM profiles WHERE user_id = ?', (session['user_id'],))
-    profile = c.fetchone()
-
-    conn.close()
-
-    profile_data = {
-        'full_name': profile['full_name'] if profile else '',
-        'initials': profile['initials'] if profile else '',
-        'phone': profile['phone'] if profile else '',
-        'dob': profile['dob'] if profile else '',
-        'skills': json.loads(profile['skills_json']) if profile and profile['skills_json'] else [],
-        'avatar_filename': profile['avatar_filename'] if profile else None
-    }
-
-    return render_template('dashboard.html', username=user['username'], profile=profile_data)
+    """Redirect authenticated users to frontend dashboard"""
+    # This route exists to protect the /dashboard path behind authentication
+    # The actual dashboard UI is served by the static frontend (Vercel)
+    # Return a simple redirect or message
+    return jsonify({'message': 'Dashboard access granted. Redirect to frontend dashboard.'}), 200
 
 @app.route('/resume-analyzer')
 def resume_analyzer():
